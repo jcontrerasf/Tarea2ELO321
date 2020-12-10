@@ -7,6 +7,8 @@
 * @brief  : Parte A de la Tarea 2.
 */
 
+// Compilar con: gcc parteA.c -o parteA
+
 //#include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -57,7 +59,7 @@ int main(){
     i.fin_row = 1;
     i.init_col = 0;
     i.fin_col = 8;
-    
+
     if(validity_check(i)){
         printf("Validación exitosa\n");
     } else {
@@ -71,15 +73,15 @@ int validity_check(struct indices i){
     uint16_t comprobador = 0;
     int j,k;
 
-    for(j=i.init_row ; j++ ; j<i.fin_row){
-        for(k=i.init_col ; k++ ; k<i.fin_col){
+    for(j=i.init_row ; j<=i.fin_row; j++){
+        for(k=i.init_col ; k<=i.fin_col; k++){
             comprobador |= 1<<sudoku_array[j][k];
             printf("verificando: %d\n", sudoku_array[j][k]);
             printf("comprobador: %x\n", comprobador);
         }
     }
 
-    if(comprobador == 0b0111111111){
+    if(comprobador == 0x3fe){ //0x3fe = 0b0000001111111110 (1s en posiciones del 1 al 9)
         return 1;
     } else {
         return 0;
