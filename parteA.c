@@ -24,11 +24,13 @@
 #include <stdint.h>
 
 
-/*! \fn validity_check ()
-    \brief Verifica filas, columnas o subcuadrículas del Sudoku
-    \param 
+/*! \fn validity_check (struct indices i)
+    \brief Verifica que cada dígito (1-9) aparezca
+    \      una sola vez entre los indices dados.
+    \param i Estructura con indices mínimos y máximos.
+    \retval 1 si la verificación es correcta, 0 si no.
 */
-int validity_check();
+int validity_check(struct indices i);
 
 int sudoku_array[9][9]  = {{6,2,4,5,3,9,1,8,7},
                          {5,1,9,7,2,8,6,3,4},
@@ -55,16 +57,61 @@ struct indices {
 
 int main(){
     struct indices i;
-    i.init_row = 1;
-    i.fin_row = 1;
-    i.init_col = 0;
-    i.fin_col = 8;
+    int j,k;
+    int sub = 0; 
 
+    //Comprobar filas
+    for (j=0; j<=8; j++){
+        i.init_row = j;
+        i.fin_row = j;
+        i.init_col = 0;
+        i.fin_col = 8;
+        if(validity_check(i)){
+            rows_checked[j] = 1;
+            printf("Fila %d está correcta\n",j);
+        } else {
+            printf("Fila %d está incorrecta\n",j);
+        }
+    }
+
+    //Comprobar columnas
+    for (k=0; k<=8; k++){
+        i.init_row = 0;
+        i.fin_row = 8;
+        i.init_col = k;
+        i.fin_col = k;
+        if(validity_check(i)){
+            cols_checked[k] = 1;
+            printf("Columna %d está correcta\n",k);
+        } else {
+            printf("Columna %d está incorrecta\n",k);
+        }
+    }
+
+    //Comprobar subcuadrículas
+    for(j=0 ; j<=2; j++){
+        for(k=0 ; k<=2; k++){
+            i.init_row = 3*j;
+            i.fin_row = 3*j + 2;
+            i.init_col = 3*k;
+            i.fin_col = 3*k + 2;
+            if(validity_check(i)){
+                sub_grids_checked[sub] = 1;
+                printf("Subcuadrícula %d,%d está correcta\n",j,k);
+            } else {
+                printf("Subcuadrícula %d,%d está incorrecta\n",j,k);
+            }
+            sub++;
+        }
+    }
+
+    
+/*
     if(validity_check(i)){
         printf("Validación exitosa\n");
     } else {
         printf("Validación fallida\n");
-    }
+    }*/
     return 0;
 }
 
@@ -72,16 +119,18 @@ int main(){
 int validity_check(struct indices i){
     uint16_t comprobador = 0;
     int j,k;
+    int n = 0;
 
     for(j=i.init_row ; j<=i.fin_row; j++){
         for(k=i.init_col ; k<=i.fin_col; k++){
             comprobador |= 1<<sudoku_array[j][k];
             printf("verificando: %d\n", sudoku_array[j][k]);
-            printf("comprobador: %x\n", comprobador);
+            //printf("comprobador: %x\n", comprobador);
+            n++;
         }
     }
 
-    if(comprobador == 0x3fe){ //0x3fe = 0b0000001111111110 (1s en posiciones del 1 al 9)
+    if(comprobador == 0x3fe && n == 9){ //0x3fe = 0b0000001111111110 (1s en posiciones del 1 al 9)
         return 1;
     } else {
         return 0;
