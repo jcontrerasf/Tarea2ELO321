@@ -9,38 +9,23 @@
 
 // Compilar con: gcc parteA.c -o parteA
 
-//#include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-//#include <fcntl.h>
-//#include <sys/shm.h>
-//#include <sys/stat.h>
-//#include <sys/mman.h>
+#include <sys/time.h>
 #include <sys/types.h>
-//#include <sys/wait.h>
-//#include <unistd.h>
-//#include <math.h>
 #include <stdint.h>
 
 
-/*! \fn validity_check (struct indices i)
-    \brief Verifica que cada dígito (1-9) aparezca
-    \      una sola vez entre los indices dados.
-    \param i Estructura con indices mínimos y máximos.
-    \retval 1 si la verificación es correcta, 0 si no.
-*/
-int validity_check(struct indices i);
-
 int sudoku_array[9][9]  = {{6,2,4,5,3,9,1,8,7},
-                         {5,1,9,7,2,8,6,3,4},
-                         {8,3,7,6,1,4,2,9,5},
-                         {1,4,3,8,6,5,7,2,9},
-                         {9,5,8,2,4,7,3,6,1},
-                         {7,6,2,3,9,1,4,5,8},
-                         {3,7,1,9,5,6,8,4,2},
-                         {4,9,6,1,8,2,5,7,3},
-                         {2,8,5,4,7,3,9,1,6}};
+                           {5,1,9,7,2,8,6,3,4},
+                           {8,3,7,6,1,4,2,9,5},
+                           {1,4,3,8,6,5,7,2,9},
+                           {9,5,8,2,4,7,3,6,1},
+                           {7,6,2,3,9,1,4,5,8},
+                           {3,7,1,9,5,6,8,4,2},
+                           {4,9,6,1,8,2,5,7,3},
+                           {2,8,5,4,7,3,9,1,6}};
 
 int rows_checked[9];
 int cols_checked[9];
@@ -54,11 +39,21 @@ struct indices {
 };
 
 
+/*! \fn validity_check (struct indices i)
+    \brief Verifica que cada dígito (1-9) aparezca
+    \      una sola vez entre los indices dados.
+    \param i Estructura con indices mínimos y máximos.
+    \retval 1 si la verificación es correcta, 0 si no.
+*/
+int validity_check(struct indices i);
+
 
 int main(){
     struct indices i;
     int j,k;
-    int sub = 0; 
+    int sub = 0;
+    int correcto[9] = {1,1,1,1,1,1,1,1,1};
+    int size = sizeof(correcto);
 
     //Comprobar filas
     for (j=0; j<=8; j++){
@@ -105,13 +100,14 @@ int main(){
         }
     }
 
-    
-/*
-    if(validity_check(i)){
-        printf("Validación exitosa\n");
+
+    //Comprobación final
+    if (memcmp(rows_checked, correcto, size) + memcmp(cols_checked, correcto, size) + memcmp(sub_grids_checked, correcto, size) == 0)
+    {
+        printf("Sudoku correcto\n");
     } else {
-        printf("Validación fallida\n");
-    }*/
+        printf("Sudoku incorrecto\n");
+    }
     return 0;
 }
 
@@ -125,7 +121,6 @@ int validity_check(struct indices i){
         for(k=i.init_col ; k<=i.fin_col; k++){
             comprobador |= 1<<sudoku_array[j][k];
             printf("verificando: %d\n", sudoku_array[j][k]);
-            //printf("comprobador: %x\n", comprobador);
             n++;
         }
     }
