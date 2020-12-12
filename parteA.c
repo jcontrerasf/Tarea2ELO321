@@ -30,6 +30,8 @@ int sudoku_array[9][9]  = {{6,2,4,5,3,9,1,8,7},
 int rows_checked[9];
 int cols_checked[9];
 int sub_grids_checked[9];
+const int correcto[9] = {1,1,1,1,1,1,1,1,1};
+int size = sizeof(correcto);
 
 struct indices {
             int init_row;  // fila inicial
@@ -52,8 +54,6 @@ int main(){
     struct indices i;
     int j,k;
     int sub = 0;
-    int correcto[9] = {1,1,1,1,1,1,1,1,1};
-    int size = sizeof(correcto);
 
     //Comprobar filas
     for (j=0; j<=8; j++){
@@ -113,21 +113,29 @@ int main(){
 
 
 int validity_check(struct indices i){
-    uint16_t comprobador = 0;
+    //uint16_t comprobador = 0;
+    int comprobador[9] = {0,0,0,0,0,0,0,0,0};
     int j,k;
     int n = 0;
 
     for(j=i.init_row ; j<=i.fin_row; j++){
         for(k=i.init_col ; k<=i.fin_col; k++){
-            comprobador |= 1<<sudoku_array[j][k];
+            //comprobador |= 1<<sudoku_array[j][k];
+            comprobador[sudoku_array[j][k]-1] = 1;
             printf("verificando: %d\n", sudoku_array[j][k]);
             n++;
         }
     }
 
-    if(comprobador == 0x3fe && n == 9){ //0x3fe = 0b0000001111111110 (1s en posiciones del 1 al 9)
+    if(memcmp(comprobador, correcto, size) == 0){ //0x3fe = 0b0000001111111110 (1s en posiciones del 1 al 9)
         return 1;
     } else {
         return 0;
     }
+
+    // if(comprobador == 0x3fe && n == 9){ //0x3fe = 0b0000001111111110 (1s en posiciones del 1 al 9)
+    //     return 1;
+    // } else {
+    //     return 0;
+    // }
 }
