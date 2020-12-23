@@ -27,9 +27,10 @@ int sudoku_array[9][9]  = {{6,2,4,5,3,9,1,8,7},
                            {4,9,6,1,8,2,5,7,3},
                            {2,8,5,4,7,3,9,1,6}};
 
-int rows_checked[9];
-int cols_checked[9];
-int sub_grids_checked[9];
+int rows_checked[9] = {0,0,0,0,0,0,0,0,0};
+int cols_checked[9] = {0,0,0,0,0,0,0,0,0};
+int sub_grids_checked[9] = {0,0,0,0,0,0,0,0,0};
+
 const int correcto[9] = {1,1,1,1,1,1,1,1,1};
 int size = sizeof(correcto);
 
@@ -102,7 +103,7 @@ int main(){
     printf("Tiempo promedio de %d repeticiones: %f sec\n", m, ((double) (tv2.tv_usec - tv1.tv_usec) / 1000000.0 + (double) (tv2.tv_sec - tv1.tv_sec)) / (float) m);
     
     //Comprobación final
-    if (memcmp(rows_checked, correcto, size) + memcmp(cols_checked, correcto, size) + memcmp(sub_grids_checked, correcto, size) == 0)
+    if ((memcmp(rows_checked, correcto, size) == 0) && (memcmp(cols_checked, correcto, size) == 0) && (memcmp(sub_grids_checked, correcto, size) == 0))
     {
         printf("Sudoku correcto\n");
     } else {
