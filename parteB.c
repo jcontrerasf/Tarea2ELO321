@@ -28,9 +28,9 @@ int sudoku_array[9][9]  = {{6,2,4,5,3,9,1,8,7},
                            {4,9,6,1,8,2,5,7,3},
                            {2,8,5,4,7,3,9,1,6}};
 
-int rows_checked[9] = {0,0,0,0,0,0,0,0,0};
-int cols_checked[9] = {0,0,0,0,0,0,0,0,0};
-int sub_grids_checked[9] = {0,0,0,0,0,0,0,0,0};
+int rows_checked[9];
+int cols_checked[9];
+int sub_grids_checked[9];
 const int correcto[9] = {1,1,1,1,1,1,1,1,1};
 int size = sizeof(correcto);
 
@@ -57,7 +57,12 @@ int main(){
     int j,k,m;
     int sub = 0;
 
+    memset(rows_checked, 0, 8);
+    memset(cols_checked, 0, 8);
+    memset(sub_grids_checked, 0, 8);
+
     gettimeofday(&tv1, NULL);
+
     for (m = 0; m < 10; m++)
     {
         //Comprobar filas
@@ -85,6 +90,7 @@ int main(){
         }
 
         //Comprobar subcuadrículas
+        #pragma omp parallel for
         for(j=0 ; j<=2; j++){
             for(k=0 ; k<=2; k++){
                 i.init_row = 3*j;
