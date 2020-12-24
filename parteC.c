@@ -1,8 +1,8 @@
-//! ELO321 - TeorÌa de Sistemas Operativos, 2020-2
+//! ELO321 - Teor√≠a de Sistemas Operativos, 2020-2
 /*!
 * @file   : parteC.c 
 * @author : Julio Contreras Fuica
-* @author : Cristian Gonz·lez Bustos
+* @author : Cristian Gonz√°lez Bustos
 * @date   : 10/12/2020
 * @brief  : Parte C de la Tarea 2.
 */
@@ -18,7 +18,7 @@
 #include <pthread.h>
 
 
-int sudoku_array[9][9]  = {{6,2,4,5,3,9,1,8,7},
+int sudoku_array[9][9]  = {{2,6,4,5,3,9,1,8,7},
                            {5,1,9,7,2,8,6,3,4},
                            {8,3,7,6,1,4,2,9,5},
                            {1,4,3,8,6,5,7,2,9},
@@ -44,10 +44,10 @@ struct indices {
 struct timeval tv1, tv2;
 
 /*! \fn validity_check (struct indices i)
-    \brief Verifica que cada dÌgito (1-9) aparezca
+    \brief Verifica que cada d√≠gito (1-9) aparezca
     \      una sola vez entre los indices dados.
-    \param i Estructura con indices mÌnimos y m·ximos.
-    \retval 1 si la verificaciÛn es correcta, 0 si no.
+    \param i Estructura con indices m√≠nimos y m√°ximos.
+    \retval 1 si la verificaci√≥n es correcta, 0 si no.
 */
 
 void* validity_check_r (void*);
@@ -56,83 +56,52 @@ void* validity_check_s (void*);
 
 
 int main(){
-    struct indices i;
-    int j,k,m,n;
-    int sub = 0;
+    struct indices i[3] = { {0,2,0,8}, {3,5,0,8}, {6,8,0,8} };
+    struct indices p[3] = { {0,8,0,2}, {0,8,3,5}, {0,8,6,8} };
+    
+    struct indices q[9] = { {0,2,0,2}, {0,2,3,5}, {0,2,6,8},
+                            {3,5,0,2}, {3,5,3,5}, {3,5,6,8},
+                            {6,8,0,2}, {6,8,3,5}, {6,8,6,8} };
+    
+    int j,m,n;
 
     gettimeofday(&tv1, NULL);
 
     for (m = 0; m < 1; m++)
     {
     
-        pthread_t threadID [18];
-        pthread_attr_t attr [18];
+        pthread_t threadID [15];
+        pthread_attr_t attr [15];
         
         // filas
-        i.init_col = 0;
-        i.fin_col = 8;
-        i.init_row = 0;
-        i.fin_row = 8;
-        
-        pthread_attr_init(&attr[0]);
-        pthread_create(&threadID[0], &attr[0], validity_check_r, &i);
+        for (j = 0; j<=2; j++) {
+          pthread_attr_init(&attr[j]);
+          pthread_create(&threadID[j], &attr[j], validity_check_r, &i[j] );
+        }
         
         // columnas
-        pthread_attr_init(&attr[1]);
-        pthread_create(&threadID[1], &attr[1], validity_check_c, &i);
-    
-    
-//        //Comprobar filas
-//        for (j=0; j<=2; j++){
-//            i.init_row = 3*j;
-//            i.fin_row = 3*j+2;
-//            i.init_col = 0;
-//            i.fin_col = 8;
-//            pthread_attr_init(&attr[j]);
-//            pthread_create(&threadID[j], &attr[j], validity_check_r, &i);
-//        }
-//
-//        //Comprobar columnas
-//        for (k=0; k<=2; k++){
-//            i.init_row = 0;
-//            i.fin_row = 8;
-//            i.init_col = 3*k;
-//            i.fin_col = 3*k+2;
-//            pthread_attr_init(&attr[k+3]);
-//            pthread_create(&threadID[k+3], &attr[k+3], validity_check_c, &i);
-//        }
+        for (j = 0; j<=2; j++) {
+          pthread_attr_init(&attr[j+3]);
+          pthread_create(&threadID[j+3], &attr[j+3], validity_check_c, &p[j] );
+        }
+        
+        //subcuadriculas
+        for (j = 0; j<=8; j++) {
+          pthread_attr_init(&attr[j+6]);
+          pthread_create(&threadID[j+6], &attr[j+6], validity_check_s, &q[j] );
+        }
 
-//        //Comprobar subcuadrÌculas
-//        for(j=0 ; j<=2; j++){
-//            for(k=0 ; k<=2; k++){
-//                i.init_row = 3*j;
-//                i.fin_row = 3*j + 2;
-//                i.init_col = 3*k;
-//                i.fin_col = 3*k + 2;
-//                if(validity_check(i)){
-//                    sub_grids_checked[sub] = 1;
-//                }
-//                sub++;
-//            }
-//        }
-
-//        pthread_join(threadID[0], NULL);
-//        pthread_join(threadID[1], NULL);
-
-        for (n = 0; n <= 1; n++)
+        for (n = 0; n <= 14; n++)
           pthread_join(threadID[n], NULL);
         
-        
-        
-        
         gettimeofday(&tv2, NULL);
-        printf ("Tiempo hasta repetiÛn n∞ %d: %f sec\n", m, (double) (tv2.tv_usec - tv1.tv_usec) / 1000000.0 + (double) (tv2.tv_sec - tv1.tv_sec));
+        printf ("Tiempo hasta repeti√≥n n¬∞ %d: %f sec\n", m, (double) (tv2.tv_usec - tv1.tv_usec) / 1000000.0 + (double) (tv2.tv_sec - tv1.tv_sec));
     }
     gettimeofday(&tv2, NULL);
     printf("Tiempo promedio de %d repeticiones: %f sec\n", m, ((double) (tv2.tv_usec - tv1.tv_usec) / 1000000.0 + (double) (tv2.tv_sec - tv1.tv_sec)) );
     
-    //ComprobaciÛn final
-    if (memcmp(rows_checked, correcto, size) + memcmp(cols_checked, correcto, size) == 0) //memcmp(sub_grids_checked, correcto, size)
+    //Comprobaci√≥n final
+    if ( (memcmp(rows_checked, correcto, size) == 0) && (memcmp(cols_checked, correcto, size) == 0) && (memcmp(sub_grids_checked, correcto, size) == 0) )
     {
         printf("Sudoku correcto\n");
     } else {
@@ -145,11 +114,11 @@ int main(){
 
 
 void* validity_check_r (void*s){
-    int comprobador[9] = {0,0,0,0,0,0,0,0,0};
     int j,k;
     struct indices i = *(struct indices*)s;
 
     for(j=i.init_row ; j<=i.fin_row; j++){
+        int comprobador[9] = {0,0,0,0,0,0,0,0,0};
         for(k=i.init_col ; k<=i.fin_col; k++){
             comprobador[sudoku_array[j][k]-1] = 1;
             //printf("verificando: %d. ", sudoku_array[j][k]);
@@ -157,12 +126,12 @@ void* validity_check_r (void*s){
         }
         if(memcmp(comprobador, correcto, size) == 0) {
           rows_checked[j] = 1;
-          //printf("Fila %d est· correcta. ",j);
-          //printf("ID: %u\n\n", pthread_self() );
+//          printf("Fila %d est√° correcta. ",j);
+//          printf("ID: %u\n", pthread_self() );
         }
         else {
-          //printf("Fila %d est· INCORRECTA. ",j);
-          //printf("ID: %u\n\n", pthread_self() );
+//          printf("Fila %d est√° INCORRECTA. ",j);
+//          printf("ID: %u\n", pthread_self() );
         }
         memset (comprobador, 0, size);
     }
@@ -170,36 +139,51 @@ void* validity_check_r (void*s){
 }
 
 void* validity_check_c (void*s){
-    int comprobador[9] = {0,0,0,0,0,0,0,0,0};
     int j,k;
     struct indices i = *(struct indices*)s;
 
     for(k=i.init_col ; k<=i.fin_col; k++){
+        int comprobador[9] = {0,0,0,0,0,0,0,0,0};
         for(j=i.init_row ; j<=i.fin_row; j++){
             comprobador[sudoku_array[j][k]-1] = 1;
-            //printf("VERIFICANDO: %d\n", sudoku_array[j][k]);
+//            printf("VERIFICANDO: %d. ", sudoku_array[j][k]);
+//            printf("ID: %u\n", pthread_self() );
         }
         if(memcmp(comprobador, correcto, size) == 0) {
           cols_checked[k] = 1;
-          //printf("Columna %d est· correcta\n",k);
+//          printf("Columna %d est√° correcta. ",k);
+//          printf("ID: %u\n", pthread_self() );
         }
         else {
-          printf("Columna %d est· INCORRECTA\n",k);
+//          printf("Columna %d est√° INCORRECTA. ",k);
+//          printf("ID: %u\n", pthread_self() );
         }
         memset (comprobador, 0, size);
     }
     pthread_exit(0);
 }
 
-//void* validity_check_s (void*s){
-//    int comprobador[9] = {0,0,0,0,0,0,0,0,0};
-//    int j,k;
-//
-//    for(j=i.init_row ; j<=i.fin_row; j++){
-//        for(k=i.init_col ; k<=i.fin_col; k++){
-//            comprobador[sudoku_array[j][k]-1] = 1;
-//            printf("verificando: %d\n", sudoku_array[j][k]);
-//        }
-//    }
-//    pthread_exit(0);
-//}
+void* validity_check_s (void*s){
+    int comprobador[9] = {0,0,0,0,0,0,0,0,0};
+    int j,k;
+    struct indices i = *(struct indices*)s;
+    int sub = i.init_col/3 + i.init_row;
+
+    for(j=i.init_row ; j<=i.fin_row; j++){
+        for(k=i.init_col ; k<=i.fin_col; k++){
+            comprobador[sudoku_array[j][k]-1] = 1;
+//            printf("verificando: %d. ", sudoku_array[j][k]);
+//            printf("ID: %u\n", pthread_self() );
+        }
+    }
+    if(memcmp(comprobador, correcto, size) == 0){
+        sub_grids_checked[ sub ] = 1;
+//        printf("Subcuadr√≠cula %d est√° correcta. ",sub);
+//        printf("ID: %u\n", pthread_self() );
+    } else {
+//        printf("Subcuadr√≠cula %d est√° INCORRECTA. ",sub);
+//        printf("ID: %u\n", pthread_self() );
+    }
+    sub++;
+    pthread_exit(0);
+}
