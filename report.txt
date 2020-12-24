@@ -1,0 +1,5 @@
+Parte D.
+
+Como se puede ver en la imagen adjunta, la implementación que menos tiempo tardó en ejecutarse fue el de la parte A, seguido de la parte B y finalmente la parte C, que fue la que más tardó.
+
+Esto podría explicarse porque el proceso de verificación del Sudoku por sí mismo no toma tanto tiempo, por lo que en los casos B y C se usa mucho tiempo en dividir y asignar memoria a los distintos hilos.

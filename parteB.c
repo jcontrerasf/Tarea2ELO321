@@ -103,6 +103,8 @@ int main(){
                 sub++;
             }
         }
+        gettimeofday(&tv2, NULL);
+        printf ("Tiempo hasta repetión n° %d: %f sec\n", m, (double) (tv2.tv_usec - tv1.tv_usec) / 1000000.0 + (double) (tv2.tv_sec - tv1.tv_sec));
     }
     gettimeofday(&tv2, NULL);
     printf("Tiempo completo de %d repeticiones: %f sec\n", m, (double) (tv2.tv_usec - tv1.tv_usec) / 1000000.0 + (double) (tv2.tv_sec - tv1.tv_sec));
